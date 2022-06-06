@@ -17,5 +17,4 @@ class AppendModel extends Model
     {
         return $this->firstname.' '.$this->lastname;
     }
-
 }
