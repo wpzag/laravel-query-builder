@@ -1,16 +1,22 @@
 <?php
 
-namespace Wpzag\QueryBuilder;
+    namespace Wpzag\QueryBuilder;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+    use Spatie\LaravelPackageTools\Package;
+    use Spatie\LaravelPackageTools\PackageServiceProvider;
+    use Wpzag\QueryBuilder\Services\ConfigParser;
 
-class QueryBuilderServiceProvider extends PackageServiceProvider
-{
-    public function configurePackage(Package $package): void
+    class QueryBuilderServiceProvider extends PackageServiceProvider
     {
-        $package
-            ->name('laravel-query-builder')
-            ->hasConfigFile();
+        public function configurePackage(Package $package): void
+        {
+            $package
+                ->name('laravel-query-builder')
+                ->hasConfigFile();
+        }
+
+        public function boot()
+        {
+            ConfigParser::parse();
+        }
     }
-}

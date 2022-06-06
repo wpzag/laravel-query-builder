@@ -1,7 +1,7 @@
 <?php
 
-namespace Wpzag\QueryBuilder;
+    namespace Wpzag\QueryBuilder;
 
-class QueryBuilder
-{
-}
+    class QueryBuilder
+    {
+    }
