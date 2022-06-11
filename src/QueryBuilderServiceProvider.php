@@ -17,6 +17,7 @@
 
         public function boot()
         {
+            parent::boot();
             ConfigParser::parse();
         }
     }
