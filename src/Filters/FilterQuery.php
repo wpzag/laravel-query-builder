@@ -32,7 +32,9 @@
             }
 
             foreach ($columns as $column) {
-                $this->filterColumn($column, $values);
+                $this->query->where(function (Builder $query) use ($column, $values) {
+                    $this->filterColumn($column, $values, $query);
+                });
             }
         }
 
@@ -41,14 +43,14 @@
             return str($key)->contains('.');
         }
 
-        private function filterColumn(string $column, array $values): void
+        private function filterColumn(string $column, array $values, Builder $query): void
         {
             foreach ($values as $key => $value) {
-                $this->applyFilters($column, $key, $value);
+                $this->applyFilters($column, $key, $value, $query);
             }
         }
 
-        private function applyFilters(string $column, int $key, array $filter): void
+        private function applyFilters(string $column, int $key, array $filter, Builder $query): void
         {
             if (! $this->columnIsAllowed($column)) {
                 return;
@@ -64,14 +66,13 @@
             $method = $key === 0 ? $method : 'oR' . $method;
             $value = $filter[ 'value' ];
             $params_count = $filter[ 'params_count' ];
-
             if ($isRelationColumn) {
-                $this->query->whereHas(
+                $query->whereHas(
                     $relation,
                     fn ($q) => $this->buildQuery($q, $params_count, $method, $column, $value, $operator)
                 );
             } else {
-                $this->buildQuery($this->query, $params_count, $method, $column, $value, $operator);
+                $this->buildQuery($query, $params_count, $method, $column, $value, $operator);
             }
         }
 
@@ -85,7 +86,7 @@
             return str($column)->after('.')->value();
         }
 
-        private function buildQuery(Builder $query, int $params_count, string $method, string $column, ?string $value, ?string $operator): void
+        private function buildQuery(Builder $query, int $params_count, string $method, string $column, string|array|null $value, ?string $operator): void
         {
             if ($params_count === 1) {
                 $query->$method($column);
