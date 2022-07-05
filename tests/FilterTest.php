@@ -2,7 +2,6 @@
 
     // Creates 5 TestModels
     use Carbon\Carbon;
-    use Illuminate\Http\Request;
     use Wpzag\QueryBuilder\QueryBuilder;
     use Wpzag\QueryBuilder\Tests\TestClasses\Models\TestModel;
 
@@ -153,7 +152,8 @@
     });
     it('can filter by nested related model', function () {
         $related = TestModel::find(1)->relatedModels()->create(['name' => 'one']);
-        QueryBuilder::for(subject: TestModel::class, request: new Request(['filter' => ['relatedModels.relatedModels.name' => 'one']]))->dd();
+        request()->query->set('filter[relatedModels.relatedModels.name]', 'one');
+        QueryBuilder::for(TestModel::class);
         $related->nestedRelatedModels()->create(['name' => 'nested']);
         $this->getJson('/test?filter[relatedModels.nestedRelatedModels.name]=dfs')
             ->assertJsonCount(1);

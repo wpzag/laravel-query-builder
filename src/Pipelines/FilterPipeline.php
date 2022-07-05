@@ -16,29 +16,19 @@
         protected Builder $query;
         protected Request $request;
 
-        /**
-         * @param array{query: Builder, request: Request} $data
-         * @param Closure $next
-         * @return Builder
-         */
-        public function handle(array $data, Closure $next): Builder
+        public function handle(Builder $query, Closure $next): Builder
         {
-            if ($this->init($data)->canPerformFiltering()) {
+            if ($this->init($query)->canPerformFiltering()) {
                 $this->filterQuery();
             }
 
             return $next($this->query);
         }
 
-        /**
-         * Initialize the class properties.
-         * @param array{query: Builder, request: Request} $data
-         * @return FilterPipeline
-         */
-        private function init(array $data): self
+        private function init(Builder $query): self
         {
-            $this->query = $data[ 'query' ];
-            $this->request = $data[ 'request' ];
+            $this->query = $query;
+            $this->request = request();
             $this->requestFilters = $this->request->filter;
             $this->allowedFilters = $this->getOptions(query: $this->query, option: 'filterable');
             $this->methods = config('query-builder.methods');
