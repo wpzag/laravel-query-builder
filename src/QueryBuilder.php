@@ -106,10 +106,8 @@
 
         public function withAppends(): Collection
         {
-            $this->query()->get();
-
             return app(Pipeline::class)
-                ->send($this->query()->get())
+                ->send($this->query())
                 ->through(AppendsPipeline::class)
                 ->thenReturn();
         }

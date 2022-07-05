@@ -128,6 +128,8 @@
                 ],],
             ]);
             config(['query-builder.disable_invalid_filter_query_exception' => false]);
+            config(['query-builder.disable_invalid_sort_exception' => false]);
             config(['query-builder.disable_invalid_include_query_exception' => false]);
+            config(['query-builder.disable_invalid_appends_exception' => false]);
         }
     }
