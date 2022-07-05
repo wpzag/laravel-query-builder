@@ -2,6 +2,7 @@
 
     // Creates 5 TestModels
     use Carbon\Carbon;
+    use function Pest\Laravel\getJson;
     use Wpzag\QueryBuilder\QueryBuilder;
     use Wpzag\QueryBuilder\Tests\TestClasses\Models\TestModel;
 
@@ -10,8 +11,10 @@
     it('wont filter if the filter param is missing')->getJson('/test')->assertJsonCount(5);
     it('wont filter if the column name is missing')->getJson('/test?filter')->assertJsonCount(5);
     it('wont filter if the column has no values')->getJson('/test?filter[name]=')->assertJsonCount(5);
-    it('wont filter if the column is wrong')->getJson('/test?filter[random]=one')->assertJsonCount(5);
-    it('wont filter if the column is not allowed in the config')->getJson('/test?filter[excepted_field]=one')->assertJsonCount(5);
+    it('wont filter if the column is not allowed in the config', function () {
+        config(['query-builder.disable_invalid_filter_query_exception' => true]);
+        getJson('/test?filter[radom]=one')->assertJsonCount(5);
+    });
 
     it('can filter by a single column and single value')
         ->getJson('/test?filter[name]=one')
