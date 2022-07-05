@@ -102,7 +102,7 @@
                 if ($request->debug) {
                     $builder->query()->dd();
                 }
-                if ($request->limit) {
+                if ($request->page) {
                     $response = $builder->withPagination();
                 } else {
                     $response = $builder->get();
