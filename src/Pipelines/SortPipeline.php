@@ -7,34 +7,28 @@
 
     class SortPipeline extends BasePipeline
     {
-        /**
-         * @param Builder $query
-         * @param Closure $next
-         * @return mixed
-         */
+        protected Builder $query;
+
         public function handle(Builder $query, Closure $next): Builder
         {
+            $this->query = $query;
             $sortParams = explode(',', request()->sort);
             if (empty($sortParams)) {
-                return $next($query);
+                return $next($this->query);
             }
 
             foreach ($sortParams as $sortParam) {
                 $columnName = str($sortParam)->remove('-')->value();
-                $sortableArray = $this->getOptions(query: $query, option: 'sortable');
+                $sortableArray = $this->getOptions(query: $this->query, option: 'sortable');
                 if (! empty($sortableArray) && in_array($columnName, $sortableArray)) {
-                    $query->orderBy($columnName, $this->getOrderDirection($sortParam));
+                    $this->query->orderBy($columnName, $this->getOrderDirection($sortParam));
                 }
             }
 
 
-            return $next($query);
+            return $next($this->query);
         }
 
-        /**
-         * @param mixed $sortParam
-         * @return string
-         */
         private function getOrderDirection(mixed $sortParam): string
         {
             return str($sortParam)->contains('-') ? 'desc' : 'asc';
