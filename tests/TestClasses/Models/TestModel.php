@@ -1,48 +1,48 @@
 <?php
 
-namespace Wpzag\QueryBuilder\Tests\TestClasses\Models;
+    namespace Wpzag\QueryBuilder\Tests\TestClasses\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\BelongsTo;
+    use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+    use Illuminate\Database\Eloquent\Relations\HasMany;
+    use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class TestModel extends Model
-{
-    use HasFactory;
-
-    protected $guarded = [];
-
-    public function relatedModels(): HasMany
+    class TestModel extends Model
     {
-        return $this->hasMany(RelatedModel::class);
-    }
+        use HasFactory;
 
-    public function relatedModel(): BelongsTo
-    {
-        return $this->belongsTo(RelatedModel::class);
-    }
+        protected $guarded = [];
 
-    public function otherRelatedModels(): HasMany
-    {
-        return $this->hasMany(RelatedModel::class);
-    }
+        public function relatedModels(): HasMany
+        {
+            return $this->hasMany(RelatedModel::class);
+        }
 
-    public function relatedThroughPivotModels(): BelongsToMany
-    {
-        return $this->belongsToMany(RelatedThroughPivotModel::class, 'pivot_models');
-    }
+        public function relatedModel(): BelongsTo
+        {
+            return $this->belongsTo(RelatedModel::class);
+        }
 
-    public function relatedThroughPivotModelsWithPivot(): BelongsToMany
-    {
-        return $this->belongsToMany(RelatedThroughPivotModel::class, 'pivot_models')
-            ->withPivot(['location']);
-    }
+        public function otherRelatedModels(): HasMany
+        {
+            return $this->hasMany(RelatedModel::class);
+        }
 
-    public function morphModels(): MorphMany
-    {
-        return $this->morphMany(MorphModel::class, 'parent');
+        public function relatedThroughPivotModels(): BelongsToMany
+        {
+            return $this->belongsToMany(RelatedThroughPivotModel::class, 'pivot_models');
+        }
+
+        public function relatedThroughPivotModelsWithPivot(): BelongsToMany
+        {
+            return $this->belongsToMany(RelatedThroughPivotModel::class, 'pivot_models')
+                ->withPivot(['location']);
+        }
+
+        public function morphModels(): MorphMany
+        {
+            return $this->morphMany(MorphModel::class, 'parent');
+        }
     }
-}

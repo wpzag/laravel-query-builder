@@ -3,13 +3,16 @@
     namespace Wpzag\QueryBuilder;
 
     use Closure;
+    use Illuminate\Contracts\Pagination\LengthAwarePaginator;
     use Illuminate\Database\Eloquent\Builder;
+    use Illuminate\Database\Eloquent\Collection;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Eloquent\Relations\Relation;
-    use Illuminate\Http\Request;
     use Illuminate\Pipeline\Pipeline;
     use Wpzag\QueryBuilder\Exceptions\InvalidSubject;
     use Wpzag\QueryBuilder\Pipelines\FilterPipeline;
+    use Wpzag\QueryBuilder\Pipelines\IncludesPipeline;
+    use Wpzag\QueryBuilder\Pipelines\PaginationPipeline;
     use Wpzag\QueryBuilder\Pipelines\SortPipeline;
 
     class QueryBuilder
@@ -17,21 +20,22 @@
         public function __construct(
             public          $subject,
             public ?Closure $callback = null,
-            public ?Request $request = null,
-            public ?array   $pipelines = null
+            public ?array   $pipelines = null,
+            public ?Builder $query = null
         ) {
         }
 
-        private function buildPipeline(): mixed
+        private function buildPipeline(): self
         {
             $query = $this->getQuery();
-            $request = $this->getRequest();
             $pipelines = $this->getPipelines();
 
-            return app(Pipeline::class)
-                ->send(['query' => $query, 'request' => $request])
+            $this->query = app(Pipeline::class)
+                ->send($query)
                 ->through($pipelines)
                 ->thenReturn();
+
+            return $this;
         }
 
         private function getQuery(): Builder
@@ -52,23 +56,38 @@
             throw InvalidSubject::make($this->subject);
         }
 
-        private function getRequest(): Request
+        public static function for($subject, ?Closure $callback = null, array $pipelines = null): self
         {
-            return $this->request ?? request();
-        }
-
-        public static function for($subject, ?Closure $callback = null, ?Request $request = null, array $pipelines = null): mixed
-        {
-            return (new self(subject: $subject, callback: $callback, request: $request, pipelines: $pipelines))
+            return (new self(subject: $subject, callback: $callback, pipelines: $pipelines))
                 ->buildPipeline();
         }
 
         private function getPipelines(): array
         {
             return $this->pipelines ??= array_filter([
-                FilterPipeline::class,
+                IncludesPipeline::class,
                 SortPipeline::class,
-                $this->callback,
+                FilterPipeline::class,
+                $this->callback ?: null,
             ]);
+        }
+
+        public function query(): Builder
+        {
+            return $this->query;
+        }
+
+        public function get(): Collection
+        {
+            return $this->query->get();
+        }
+
+        public function withPagination(): LengthAwarePaginator
+        {
+            return app(Pipeline::class)
+                ->send($this->query)
+                ->through(PaginationPipeline::class)
+                ->thenReturn();
+//                AppendsPipeline::class,
         }
     }

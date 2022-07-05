@@ -1,6 +1,5 @@
 <?php
 
-    use Illuminate\Http\Request;
     use Wpzag\QueryBuilder\Exceptions\InvalidColumnException;
     use Wpzag\QueryBuilder\Exceptions\InvalidSubject;
     use Wpzag\QueryBuilder\QueryBuilder;
@@ -28,5 +27,15 @@
 
     it('throws error if filter column not allowed', function () {
         config(['query-builder.disable_invalid_filter_query_exception' => false]);
-        QueryBuilder::for(subject: TestModel::class, request: new Request(['filter' => ['random' => 'not_allowed']]));
+        request()->query->set('filter', ['random' => 'not_allowed']);
+        QueryBuilder::for(TestModel::class);
     })->throws(InvalidColumnException::class);
+
+    it('asd', function () {
+        TestModel::factory(2)->sequence(fn ($sequence) => ['age' => 10], ['age' => 20])->create();
+
+//        dd(TestModel::with('relatedModels')->get()->toArray());
+        request()->query->set('includes', 'relatedModels');
+        $res = QueryBuilder::for(TestModel::class);
+        dd($res->get()->toArray());
+    });

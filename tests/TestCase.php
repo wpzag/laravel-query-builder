@@ -98,11 +98,15 @@
         private function setUpRoutes()
         {
             Route::get('/test', function (Request $request) {
-                $query = QueryBuilder::for(TestModel::class);
+                $builder = QueryBuilder::for(TestModel::class);
                 if ($request->debug) {
-                    $query->dd();
+                    $builder->query()->dd();
                 }
-                $response = $query->get();
+                if ($request->limit) {
+                    $response = $builder->withPagination();
+                } else {
+                    $response = $builder->get();
+                }
 
                 return response()->json($response);
             });
@@ -112,12 +116,14 @@
         {
             config(['query-builder.models' => [
                 TestModel::class => [
-                    'includes' => [''],
+                    'includes' => ['relatedModels', "relatedModels.nestedRelatedModels"],
                     'appends' => ['appendedValue'],
                     'filterable' => ['name', 'age:exact', 'common', 'null_field', 'created_at', 'relatedModels.name', 'relatedModels.nestedRelatedModels.name'],
                     'sortable' => ['name', 'age'],
                     'max_per_page' => 10,
                 ],],
             ]);
+            config(['query-builder.disable_invalid_filter_query_exception' => false]);
+            config(['query-builder.disable_invalid_include_query_exception' => false]);
         }
     }
