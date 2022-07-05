@@ -41,6 +41,8 @@ php artisan vendor:publish --tag="query-builder-config"
 
 #### [  *:except:column1,column2   ] You can also exclude some attributes by adding :except: then comma separated attributes .
 
+#### [  age:exact   ] If you prefixed the attribute with :extact it will use the ( = )  operator instead of ( LIKE ) operator in the query.
+
 # Usage
 
 ```php 
