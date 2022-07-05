@@ -18,7 +18,7 @@ composer require wpzag/laravel-query-builder
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-query-builder-config"
+php artisan vendor:publish --tag="query-builder-config"
 ```
 
 ## Usage
