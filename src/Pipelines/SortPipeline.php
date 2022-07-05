@@ -9,19 +9,20 @@
     class SortPipeline extends BasePipeline
     {
         protected Builder $query;
+        protected array $sortableArray;
 
         public function handle(Builder $query, Closure $next): Builder
         {
             $this->query = $query;
-            $sortParams = explode(',', request()->sort);
-            if (empty($sortParams)) {
+            if (empty(request()->sort)) {
                 return $next($this->query);
             }
+            $sortParams = explode(',', request()->sort);
+            $this->sortableArray = $this->getOptions(query: $this->query, option: 'sortable');
 
             foreach ($sortParams as $sortParam) {
                 $columnName = str($sortParam)->remove('-')->value();
-                $sortableArray = $this->getOptions(query: $this->query, option: 'sortable');
-                if ($this->isValidSortParam($sortableArray, $columnName)) {
+                if ($this->isValidSortParam($columnName)) {
                     $this->query->orderBy($columnName, $this->getOrderDirection($sortParam));
                 }
             }
@@ -36,15 +37,14 @@
         }
 
         /**
-         * @param array|string|null $sortableArray
          * @param string $columnName
          * @return bool
          */
-        private function isValidSortParam(array|string|null $sortableArray, string $columnName): bool
+        private function isValidSortParam(string $columnName): bool
         {
-            $isValid = ! empty($sortableArray) && in_array($columnName, $sortableArray);
-            if (! $isValid && ! config('query-builder.disable_invalid_sort_exception')) {
-                throw new InvalidSortQuery($columnName, $sortableArray);
+            $isValid = ! empty($this->sortableArray) && in_array($columnName, $this->sortableArray);
+            if (! empty($this->sortableArray) && ! in_array($columnName, $this->sortableArray) && ! config('query-builder.disable_invalid_sort_exception')) {
+                throw new InvalidSortQuery($columnName, $this->sortableArray);
             }
 
             return $isValid;

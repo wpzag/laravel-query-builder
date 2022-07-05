@@ -7,17 +7,17 @@
 
     class InvalidSortQuery extends HttpException
     {
-        public function __construct(public string $unknownInclude, public array $allowedAppends)
+        public function __construct(public string $unknownSort, public array $allowedSorts)
         {
-            $allowedAppendsString = collect($allowedAppends)->implode(', ');
+            $allowedSortsString = collect($allowedSorts)->implode(', ');
 
-            $message = "Requested appends `{$unknownInclude}` is not allowed. Allowed include(s) are `{$allowedAppendsString}`.";
+            $message = "Requested sorts `{$unknownSort}` is not allowed. Allowed sort(s) are `{$allowedSortsString}`.";
 
 
             parent::__construct(ResponseAlias::HTTP_BAD_REQUEST, $message);
         }
 
-        public static function columnNotAllowed(string $column, array $allowedAppends): static
+        public static function columnNotAllowed(string $column, array $allowedSorts): static
         {
             return new static(...func_get_args());
         }

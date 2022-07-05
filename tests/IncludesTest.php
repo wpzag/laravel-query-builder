@@ -18,7 +18,7 @@
         $nested = $test->relatedModels()->create(['name' => 'A']);
         $nested->nestedRelatedModels()->create(['name' => 'B']);
         $res = getJson('/test?includes=relatedModels.nestedRelatedModels');
-        expect($res->getData())->dd()
+        expect($res->getData())
             ->{0}->related_models
             ->{0}->nested_related_models
             ->toHaveLength(1);

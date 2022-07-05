@@ -95,6 +95,7 @@
         ->getJson('/test?filter[age][not-between]=[20,50]')
         ->assertJsonCount(1)
         ->assertJsonFragment(['age' => 10]);
+
     it('can filter in a list')
         ->getJson('/test?filter[age][in]=[10,20,30]')
         ->assertJsonCount(3)

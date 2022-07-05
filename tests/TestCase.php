@@ -123,7 +123,7 @@
                     'includes' => ['relatedModels', "relatedModels.nestedRelatedModels"],
                     'appends' => ['appended_field'],
                     'filterable' => ['name', 'age:exact', 'common', 'null_field', 'created_at', 'relatedModels.name', 'relatedModels.nestedRelatedModels.name'],
-                    'sortable' => ['name', 'age'],
+                    'sortable' => ['name', 'age', 'created_at'],
                     'max_per_page' => 10,
                 ],],
             ]);
