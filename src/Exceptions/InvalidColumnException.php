@@ -5,7 +5,7 @@
     use Illuminate\Http\Response;
     use Symfony\Component\HttpKernel\Exception\HttpException;
 
-    class InvalidColumnException extends HttpException
+    final class InvalidColumnException extends HttpException
     {
         public function __construct(public string $unknownFilter, public array $allowedFilters)
         {

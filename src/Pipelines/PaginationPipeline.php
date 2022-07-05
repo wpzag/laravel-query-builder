@@ -5,6 +5,7 @@
     use Closure;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Pagination\LengthAwarePaginator;
+    use Wpzag\QueryBuilder\Services\QueryBuilderPaginator;
 
     class PaginationPipeline extends BasePipeline
     {
@@ -23,9 +24,8 @@
 
             $limit = min($requestedPerPage, $maxPerPage);
 
-
-            $paginated = $this->query->paginate($limit);
-            $paginated->model = $this->query->getModel();
+            $paginated = new QueryBuilderPaginator($this->query->paginate($limit));
+            $paginated->setModelName($this->query->getModel()::class);
 
 
             return $next($paginated);

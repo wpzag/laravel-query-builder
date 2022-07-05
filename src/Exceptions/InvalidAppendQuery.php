@@ -5,7 +5,7 @@
     use Symfony\Component\HttpFoundation\Response as ResponseAlias;
     use Symfony\Component\HttpKernel\Exception\HttpException;
 
-    class InvalidAppendQuery extends HttpException
+    final class InvalidAppendQuery extends HttpException
     {
         public function __construct(public string $unknownInclude, public array $allowedAppends)
         {

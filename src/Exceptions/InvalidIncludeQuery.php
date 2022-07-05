@@ -5,7 +5,7 @@
     use Symfony\Component\HttpFoundation\Response as ResponseAlias;
     use Symfony\Component\HttpKernel\Exception\HttpException;
 
-    class InvalidIncludeQuery extends HttpException
+    final class InvalidIncludeQuery extends HttpException
     {
         public function __construct(public string $unknownInclude, public array $allowedIncludes)
         {

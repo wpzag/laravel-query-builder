@@ -5,7 +5,7 @@
     use Symfony\Component\HttpFoundation\Response as ResponseAlias;
     use Symfony\Component\HttpKernel\Exception\HttpException;
 
-    class InvalidSortQuery extends HttpException
+    final class InvalidSortQuery extends HttpException
     {
         public function __construct(public string $unknownSort, public array $allowedSorts)
         {

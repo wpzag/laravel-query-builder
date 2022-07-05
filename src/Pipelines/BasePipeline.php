@@ -3,14 +3,14 @@
     namespace Wpzag\QueryBuilder\Pipelines;
 
     use Illuminate\Database\Eloquent\Builder;
-    use Illuminate\Pagination\LengthAwarePaginator;
+    use Wpzag\QueryBuilder\Services\QueryBuilderPaginator;
 
     abstract class BasePipeline
     {
-        protected function getOptions(Builder|LengthAwarePaginator $query, string $option): array|string|null
+        protected function getOptions(Builder|QueryBuilderPaginator $query, string $option): array|string|null
         {
-            if ($query instanceof LengthAwarePaginator) {
-                $model = $query->model::class;
+            if ($query instanceof QueryBuilderPaginator) {
+                $model = $query->getModelName();
             } else {
                 $model = $query->getModel()::class;
             }

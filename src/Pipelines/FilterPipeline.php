@@ -59,8 +59,7 @@
                     allowedFilters: $this->allowedFilters,
                     requestFilters: $value,
                     requestColumns: $columns,
-                    methods: $this->methods,
-                    operators: $this->operators
+                    methods: $this->methods
                 ))->handle();
             }
         }

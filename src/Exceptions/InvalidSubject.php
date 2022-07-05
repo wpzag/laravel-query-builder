@@ -4,7 +4,7 @@
 
     use InvalidArgumentException;
 
-    class InvalidSubject extends InvalidArgumentException
+    final class InvalidSubject extends InvalidArgumentException
     {
         public static function make($subject): static
         {

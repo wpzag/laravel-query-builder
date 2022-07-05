@@ -14,7 +14,6 @@
             private readonly array|string|null $requestFilters,
             private readonly string            $requestColumns,
             private readonly array             $methods,
-            private readonly array             $operators
         ) {
         }
 
