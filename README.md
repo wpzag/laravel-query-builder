@@ -37,9 +37,9 @@ php artisan vendor:publish --tag="query-builder-config"
  ]       
 ```
 
-#### [ * ] means all the model's table columns except hidden columns
+#### [ * ] means all the model's attribute except hidden .
 
-#### [  *:except:column1,column2   ] You can also exclude some columns by adding :except: then comma separated columns .
+#### [  *:except:column1,column2   ] You can also exclude some attributes by adding :except: then comma separated attributes .
 
 # Usage
 
@@ -154,9 +154,9 @@ users?append=fullname
 ### Loading relations
 
 ```php
-users?include=posts.comments.author, comments.author
+users?include=profile,posts.comments.author
 
-// User::with('posts')->with('posts.comments','posts.comments.author')->get();
+// User::with('profile','posts.comments.author')->get();
 
 ```
 
