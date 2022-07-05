@@ -27,6 +27,7 @@
         {
             $columns = explode(',', $columns);
             $values = $this->makeFiltersArray($values);
+
             if (! is_array($values)) {
                 return;
             }
@@ -60,7 +61,8 @@
             $relation = $isRelationColumn ? $this->getRelationFromColumn($column) : null;
 
             $column = $isRelationColumn ? $this->getColumnNameFromRelation($column) : $column;
-            $operator = $this->isColumnExact($column) ? '=' : $filter[ 'operator' ];
+            $operator = ($this->isColumnExact($column) && $filter[ 'operator' ] === 'like') ? '=' : $filter[ 'operator' ];
+
 
             $method = $filter[ 'method' ];
             $method = $key === 0 ? $method : 'oR' . $method;

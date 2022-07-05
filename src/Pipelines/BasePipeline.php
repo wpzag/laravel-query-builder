@@ -11,7 +11,6 @@
         {
             $model = $query instanceof LengthAwarePaginator ? $query->model::class : $query->getModel()::class;
 
-
             return config("query-builder.models.$model.$option");
         }
 

@@ -114,7 +114,7 @@
                 TestModel::class => [
                     'includes' => [''],
                     'appends' => ['appendedValue'],
-                    'filterable' => ['name', 'age', 'common', 'null_field', 'created_at'],
+                    'filterable' => ['name', 'age:exact', 'common', 'null_field', 'created_at', 'relatedModels.name', 'relatedModels.nestedRelatedModels.name'],
                     'sortable' => ['name', 'age'],
                     'max_per_page' => 10,
                 ],],

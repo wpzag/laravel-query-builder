@@ -3,6 +3,7 @@
     namespace Wpzag\QueryBuilder\Filters;
 
     use Illuminate\Support\Arr;
+    use Wpzag\QueryBuilder\Exceptions\InvalidColumnException;
 
     trait FilterHelpers
     {
@@ -83,16 +84,15 @@
             ];
         }
 
-        private function isValidFilter(array|string|null $filter): bool
+        private function isValidFilter(array|string|int|null $filter): bool
         {
-
             // Filter must not be empty
-            if (empty($filter)) {
+            if ($filter === null || $filter === '') {
                 return false;
             }
 
             // If a string filter return true
-            if (is_string($filter)) {
+            if (is_string($filter) || is_int($filter)) {
                 return true;
             }
 
@@ -232,7 +232,6 @@
 
         private function getValues(string $method, ?string $values): ?array
         {
-            //			dd($this->getMultipleArraysFromStringValue($values));
             if ($this->isOneArgMethod($method)) {
                 return null;
             }
@@ -245,7 +244,13 @@
 
         private function columnIsAllowed(string $column): bool
         {
-            return in_array($column, $this->allowedFilters) || in_array($column . ':exact', $this->allowedFilters);
+            $allowed = fn ($column) => in_array($column, $this->allowedFilters);
+
+            if (! $allowed($column) && ! $allowed($column . ':exact') && ! config('query-builder.disable_invalid_filter_query_exception')) {
+                throw  InvalidColumnException::columnNotAllowed($column, $this->allowedFilters);
+            }
+
+            return $allowed($column) || $allowed($column . ':exact');
         }
 
         private function isColumnExact(string $column): bool

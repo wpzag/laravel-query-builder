@@ -2,6 +2,8 @@
 
     // Creates 5 TestModels
     use Carbon\Carbon;
+    use Illuminate\Http\Request;
+    use Wpzag\QueryBuilder\QueryBuilder;
     use Wpzag\QueryBuilder\Tests\TestClasses\Models\TestModel;
 
     beforeEach(fn () => createModels());
@@ -40,6 +42,7 @@
         ->assertJsonCount(2)
         ->assertJsonFragment(['age' => 40])
         ->assertJsonFragment(['age' => 50]);
+
 
     it('can filter with an greater than or equal operator')
         ->getJson('/test?filter[age]=gte.40')
@@ -112,6 +115,7 @@
         ->getJson('/test?filter[created_at][time]=02:00:00')
         ->assertJsonCount(1)
         ->assertJsonFragment(['created_at' => Carbon::parse('2020-02-02 02:00:00')->toISOString()]);
+
     it('can filter by day')
         ->getJson('/test?filter[created_at][day]=2')
         ->assertJsonCount(1)
@@ -126,13 +130,31 @@
         ->getJson('/test?filter[created_at][year]=2020')
         ->assertJsonCount(5);
 
-    it('can filter by a null column', function () {
+    it('can filter by a null columns', function () {
         TestModel::find(1)->update(['age' => null]);
         $this->getJson('/test?filter[age][empty]')->assertJsonCount(1);
     });
 
-    it('can filter by a none-null column', function () {
+    it('can filter by a none-null columns', function () {
         TestModel::query()->update(['age' => null]);
         TestModel::find(1)->update(['age' => 10]);
         $this->getJson('/test?filter[age][empty]')->assertJsonCount(4);
+    });
+
+    it('wont ignore falsy values', function () {
+        $this->getJson('/test?filter[age]=0')
+            ->assertJsonCount(0);
+    });
+
+    it('can filter by related model', function () {
+        TestModel::find(1)->relatedModels()->create(['name' => 'one']);
+        $this->getJson('/test?filter[relatedModels.name]=one')
+            ->assertJsonCount(1);
+    });
+    it('can filter by nested related model', function () {
+        $related = TestModel::find(1)->relatedModels()->create(['name' => 'one']);
+        QueryBuilder::for(subject: TestModel::class, request: new Request(['filter' => ['relatedModels.relatedModels.name' => 'one']]))->dd();
+        $related->nestedRelatedModels()->create(['name' => 'nested']);
+        $this->getJson('/test?filter[relatedModels.nestedRelatedModels.name]=dfs')
+            ->assertJsonCount(1);
     });

@@ -58,4 +58,6 @@
 			'lte' => '<=',
 			'ne' => '!=',
 		],
+		'disable_invalid_filter_query_exception' => true,
+	
 	];
