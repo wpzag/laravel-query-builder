@@ -59,6 +59,8 @@
 			'ne' => '!=',
 		],
 		'disable_invalid_filter_query_exception' => true,
+		'disable_invalid_sort_exception' => true,
 		'disable_invalid_include_query_exception' => true,
+		'disable_invalid_appends_exception' => true,
 	
 	];
