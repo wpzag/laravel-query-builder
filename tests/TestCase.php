@@ -102,8 +102,12 @@
                 if ($request->debug) {
                     $builder->query()->dd();
                 }
-                if ($request->page) {
+                if ($request->append && $request->page) {
+                    $response = $builder->withPaginationAndAppends();
+                } elseif ($request->page) {
                     $response = $builder->withPagination();
+                } elseif ($request->append) {
+                    $response = $builder->withAppends();
                 } else {
                     $response = $builder->get();
                 }
@@ -117,7 +121,7 @@
             config(['query-builder.models' => [
                 TestModel::class => [
                     'includes' => ['relatedModels', "relatedModels.nestedRelatedModels"],
-                    'appends' => ['appendedValue'],
+                    'appends' => ['appended_field'],
                     'filterable' => ['name', 'age:exact', 'common', 'null_field', 'created_at', 'relatedModels.name', 'relatedModels.nestedRelatedModels.name'],
                     'sortable' => ['name', 'age'],
                     'max_per_page' => 10,

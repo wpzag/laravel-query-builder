@@ -20,6 +20,11 @@
             return $this->hasMany(RelatedModel::class);
         }
 
+        public function getAppendedFieldAttribute(): string
+        {
+            return 'appended';
+        }
+
         public function relatedModel(): BelongsTo
         {
             return $this->belongsTo(RelatedModel::class);

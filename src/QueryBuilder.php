@@ -10,6 +10,7 @@
     use Illuminate\Database\Eloquent\Relations\Relation;
     use Illuminate\Pipeline\Pipeline;
     use Wpzag\QueryBuilder\Exceptions\InvalidSubject;
+    use Wpzag\QueryBuilder\Pipelines\AppendsPipeline;
     use Wpzag\QueryBuilder\Pipelines\FilterPipeline;
     use Wpzag\QueryBuilder\Pipelines\IncludesPipeline;
     use Wpzag\QueryBuilder\Pipelines\PaginationPipeline;
@@ -18,10 +19,11 @@
     class QueryBuilder
     {
         public function __construct(
-            public          $subject,
-            public ?Closure $callback = null,
-            public ?array   $pipelines = null,
-            public ?Builder $query = null
+            public                       $subject,
+            public ?Closure              $callback = null,
+            public ?array                $pipelines = null,
+            public ?Builder              $query = null,
+            public ?LengthAwarePaginator $paginator = null
         ) {
         }
 
@@ -84,10 +86,31 @@
 
         public function withPagination(): LengthAwarePaginator
         {
-            return app(Pipeline::class)
+            $this->paginator = app(Pipeline::class)
                 ->send($this->query)
                 ->through(PaginationPipeline::class)
                 ->thenReturn();
-//                AppendsPipeline::class,
+
+            return $this->paginator;
+        }
+
+        public function withPaginationAndAppends(): LengthAwarePaginator
+        {
+            $this->withPagination();
+
+            return app(Pipeline::class)
+                ->send($this->paginator)
+                ->through(AppendsPipeline::class)
+                ->thenReturn();
+        }
+
+        public function withAppends(): Collection
+        {
+            $this->query()->get();
+
+            return app(Pipeline::class)
+                ->send($this->query()->get())
+                ->through(AppendsPipeline::class)
+                ->thenReturn();
         }
     }

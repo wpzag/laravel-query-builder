@@ -30,12 +30,3 @@
         request()->query->set('filter', ['random' => 'not_allowed']);
         QueryBuilder::for(TestModel::class);
     })->throws(InvalidColumnException::class);
-
-    it('asd', function () {
-        TestModel::factory(2)->sequence(fn ($sequence) => ['age' => 10], ['age' => 20])->create();
-
-//        dd(TestModel::with('relatedModels')->get()->toArray());
-        request()->query->set('includes', 'relatedModels');
-        $res = QueryBuilder::for(TestModel::class);
-        dd($res->get()->toArray());
-    });
