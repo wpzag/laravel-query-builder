@@ -89,6 +89,13 @@ users?filter[name]=john,rose
 ```
 
 ```php
+users?filter[name,username]=john
+
+// User::where('name','like','%john%')
+//       ->orWhere('username','like','%rose%')->get();
+```
+
+```php
 users?filter[name]=john,rose&filter[age]=gt.20
 
 // User::where('name','like','%john%')

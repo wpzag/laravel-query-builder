@@ -33,6 +33,12 @@
         ->assertJsonCount(1)
         ->assertJsonFragment(['age' => 10]);
 
+    it('can filter by multiple columns for same value')
+//        ->getJson('/test?filter[common,age]=20')
+        ->getJson('/test?filter[common,name]=20,50&filter[age]=20')
+        ->assertJsonCount(1)
+        ->assertJsonFragment(['age' => 20]);
+
     it('can filter by multiple columns and multiple values')
         ->getJson('/test?filter[common]=common&filter[age]=10,20')
         ->assertJsonCount(2)

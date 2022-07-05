@@ -9,7 +9,7 @@
         use FilterHelpers;
 
         public function __construct(
-            private readonly Builder           $query,
+            private Builder                    $query,
             private readonly array             $allowedFilters,
             private readonly array|string|null $requestFilters,
             private readonly string            $requestColumns,
@@ -27,15 +27,15 @@
             $columns = explode(',', $columns);
             $values = $this->makeFiltersArray($values);
 
+
             if (! is_array($values)) {
                 return;
             }
-
-            foreach ($columns as $column) {
-                $this->query->where(function (Builder $query) use ($column, $values) {
-                    $this->filterColumn($column, $values, $query);
-                });
-            }
+            $this->query->where(function (Builder $query) use ($columns, $values) {
+                foreach ($columns as $column_key => $column) {
+                    $this->filterColumn($column, $column_key, $values, $query);
+                }
+            });
         }
 
         private function isRelationColumn(string $key): bool
@@ -43,14 +43,14 @@
             return str($key)->contains('.');
         }
 
-        private function filterColumn(string $column, array $values, Builder $query): void
+        private function filterColumn(string $column, int $column_key, array $values, Builder $query): void
         {
             foreach ($values as $key => $value) {
-                $this->applyFilters($column, $key, $value, $query);
+                $this->applyFilters($column, $column_key, $key, $value, $query);
             }
         }
 
-        private function applyFilters(string $column, int $key, array $filter, Builder $query): void
+        private function applyFilters(string $column, int $column_key, int $key, array $filter, Builder $query): void
         {
             if (! $this->columnIsAllowed($column)) {
                 return;
@@ -60,11 +60,14 @@
             $relation = $isRelationColumn ? $this->getRelationFromColumn($column) : null;
 
             $column = $isRelationColumn ? $this->getColumnNameFromRelation($column) : $column;
+
+
             $operator = ($this->isColumnExact($column) && $filter[ 'operator' ] === 'like') ? '=' : $filter[ 'operator' ];
 
 
             $method = $filter[ 'method' ];
-            $method = $key === 0 ? $method : 'oR' . $method;
+            $method = $key === 0 && $column_key === 0 ? $method : 'or' . str($method)->title();
+
             $value = $filter[ 'value' ];
             $params_count = $filter[ 'params_count' ];
             if ($isRelationColumn) {
