@@ -139,14 +139,14 @@ users?filter[role][not-in]=[admin,teacher,student]
 ### Sorting
 
 ```php
-users?sort[name]=-created_at
+users?sort=-created_at
 
 // User::orderBy('created_at', 'desc')->get();
 
 ```
 
 ```php
-users?sort[name]=-statues,name
+users?sort=-statues,name
 
 // User::orderBy('statues', 'desc')->orderBy('name', 'asc')->get();
 
